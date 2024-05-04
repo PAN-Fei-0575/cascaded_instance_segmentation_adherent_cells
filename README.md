@@ -90,7 +90,7 @@ Follow these step-by-step instructions to install the project:
 
 5. Modify the `mmdetection-2.28.2` and `mmpretrain-0.25.0` paths in the following sample script and run it
 
-    <pre>
+<pre>
 cd D:\mmdetection-2.28.2\
 python demo/0_create_rotated_dataset.py --dataset hepg2
 python tools/train.py configs/mask_rcnn/mask_rcnn_r50_caffe_fpn_1x_hepg2.py
@@ -103,6 +103,6 @@ python tools/train.py configs/resnet/resnet18_8xb32_in1k_hepg2.py --work-dir wor
 python demo/2_gen_cls_vis.py --mmdet_config mask_rcnn_r50_caffe_fpn_1x_hepg2 --mmcls_config resnet18_8xb32_in1k_hepg2 --device cuda:0
 python demo/3_mask_nms.py --set test --mmdet_config mask_rcnn_r50_caffe_fpn_1x_hepg2 --mmcls_config resnet18_8xb32_in1k_hepg2
 python demo/4_perf_eval.py --set test --mmdet_config mask_rcnn_r50_caffe_fpn_1x_hepg2 --mmcls_config resnet18_8xb32_in1k_hepg2
-    </pre>
+</pre>
     
 6. All final predictions results are stored in a text file like `G:\dvsisn_hepg2\mmpretrain-0.25.0\work_dirs\resnet18_8xb32_in1k_hepg2\mask_rcnn_r50_caffe_fpn_1x_hepg2\vis_cls_final\collect\stats.txt`

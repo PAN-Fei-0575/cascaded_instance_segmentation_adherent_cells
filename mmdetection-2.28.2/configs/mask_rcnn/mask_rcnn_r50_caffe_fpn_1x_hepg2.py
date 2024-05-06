@@ -226,8 +226,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        classes=('cell', 'bad_cell')),
-    rpn_head=dict(anchor_ratios=[0.3, 0.5, 1, 2, 3]))
+        classes=('cell', 'bad_cell')))
 evaluation = dict(metric=['bbox', 'segm'])
 optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)

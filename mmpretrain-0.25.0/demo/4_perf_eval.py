@@ -1,6 +1,6 @@
 import json
 import os
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 import sys
 from argparse import ArgumentParser
 
@@ -103,7 +103,7 @@ def main():
     vis_cls_final_dir = os.path.join(mmcls_base_dir, 'work_dirs', args.mmcls_config, args.mmdet_config,  'vis_cls_final')
     test_set_coco_dt_path = os.path.join(mmcls_base_dir, 'work_dirs', args.mmcls_config, args.mmdet_config, 'vis_cls_final', 'collect')
 
-    test_set_coco_gt_path = os.path.join(mmdet_base_dir, 'data', 'HepG2', 'coco_style', args.set, 'annotations_new_non_overlap.json')
+    test_set_coco_gt_path = os.path.join(mmdet_base_dir, 'data', 'hepg2', 'coco_style', args.set, 'annotations_new_non_overlap.json')
     test_set_coco_pred_path = os.path.join(mmdet_base_dir, 'work_dirs', args.mmdet_config, args.set,
                                            'results.segm.json')
 
@@ -128,14 +128,10 @@ def main():
         class_names = []
 
         img_name = cocoDt.imgs[imgId]['file_name']
-        img_path = os.path.join(mmdet_base_dir, 'data', 'HepG2', 'coco_style', args.set, 'images', img_name)
+        img_path = os.path.join(mmdet_base_dir, 'data', 'hepg2', 'coco_style', args.set, 'images', img_name)
         out_file = os.path.join(test_set_coco_dt_path, img_name.split('/')[-1])
-        #if not os.path.exists(out_file):
-        if True:
-            if imgId == 94:
-                continue
+        if not os.path.exists(out_file):
             img = mmcv.imread(img_path)
-
             for ann in anns:
                 conf_score.append(ann['score'])
                 bboxes.append(ann['bbox'])

@@ -1,7 +1,3 @@
-import os
-os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
-
-
 model = dict(
     type='MaskRCNN',
     backbone=dict(
@@ -70,14 +66,14 @@ model = dict(
             conv_out_channels=256,
             num_classes=2,
             loss_mask=dict(
-                type='CrossEntropyLoss', use_mask=True, loss_weight=3.0))),
+                type='CrossEntropyLoss', use_mask=True, loss_weight=1.0))),
     train_cfg=dict(
         rpn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
                 pos_iou_thr=0.7,
-                neg_iou_thr=0.2,
-                min_pos_iou=0.2,
+                neg_iou_thr=0.3,
+                min_pos_iou=0.3,
                 match_low_quality=True,
                 ignore_iof_thr=-1),
             sampler=dict(
@@ -88,24 +84,25 @@ model = dict(
                 add_gt_as_proposals=False),
             allowed_border=-1,
             pos_weight=-1,
-            debug=False),
+            debug=False,
+            min_pos_iou=0.2),
         rpn_proposal=dict(
             nms_pre=2000,
             max_per_img=1000,
-            nms=dict(type='nms', iou_threshold=0.6),
+            nms=dict(type='nms', iou_threshold=0.7),
             min_bbox_size=0),
         rcnn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
-                pos_iou_thr=0.7,
-                neg_iou_thr=0.3,
-                min_pos_iou=0.1,
+                pos_iou_thr=0.5,
+                neg_iou_thr=0.5,
+                min_pos_iou=0.5,
                 match_low_quality=True,
                 ignore_iof_thr=-1),
             sampler=dict(
                 type='RandomSampler',
                 num=512,
-                pos_fraction=0.4,
+                pos_fraction=0.25,
                 neg_pos_ub=-1,
                 add_gt_as_proposals=True),
             mask_size=28,
@@ -116,11 +113,10 @@ model = dict(
             nms_pre=1000,
             max_per_img=1000,
             nms=dict(type='nms', iou_threshold=0.7),
-            min_bbox_size=0,
-            nms_threshold=0.95),
+            min_bbox_size=0),
         rcnn=dict(
-            score_thr=0.2,
-            nms=dict(type='nms', iou_threshold=0.7),
+            score_thr=0.05,
+            nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100,
             mask_thr_binary=0.5)))
 dataset_type = 'CocoDataset'
@@ -132,7 +128,8 @@ train_pipeline = [
     dict(
         type='LoadAnnotations',
         with_bbox=True,
-        with_mask=True),
+        with_mask=True,
+        poly2mask=False),
     dict(
         type='Resize',
         img_scale=[(1333, 640), (1333, 800)],
@@ -168,21 +165,22 @@ test_pipeline = [
         ])
 ]
 data = dict(
-    samples_per_gpu=1,
+    samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(
         type='RepeatDataset',
         times=3,
         dataset=dict(
             type='CocoDataset',
-            ann_file=r'data/HepG2/coco_style_rotated/train/annotations.json',
-			img_prefix=r'data/HepG2/coco_style_rotated/train/images',
+        ann_file=r'data/hepg2/coco_style_rotated/train/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/train/images',
             pipeline=[
                 dict(type='LoadImageFromFile'),
                 dict(
                     type='LoadAnnotations',
                     with_bbox=True,
-                with_mask=True),
+                    with_mask=True,
+                    poly2mask=False),
                 dict(
                     type='Resize',
                     img_scale=[(1333, 640), (1333, 800)],
@@ -199,12 +197,12 @@ data = dict(
                 dict(
                     type='Collect',
                     keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks'])
-            ],
-        classes=('cell', 'bad_cell'))),
+        ],
+        classes=('cell', 'bad_cell')),
     val=dict(
         type='CocoDataset',
-        ann_file=r'data/HepG2/coco_style_rotated/val/annotations.json',
-        img_prefix=r'data/HepG2/coco_style_rotated/val/images',
+        ann_file=r'data/hepg2/coco_style_rotated/val/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/val/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -227,8 +225,8 @@ data = dict(
         classes=('cell', 'bad_cell')),
     test=dict(
         type='CocoDataset',
-        ann_file=r'data/HepG2/coco_style_rotated/test/annotations.json',
-        img_prefix=r'data/HepG2/coco_style_rotated/test/images',
+        ann_file=r'data/hepg2/coco_style_rotated/test/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/test/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -248,8 +246,7 @@ data = dict(
                     dict(type='Collect', keys=['img'])
                 ])
         ],
-        classes=('cell', 'bad_cell')),
-    rpn_head=dict(anchor_ratios=[0.3, 0.5, 1, 2, 3]))
+        classes=('cell', 'bad_cell')))
 evaluation = dict(interval=1, metric=['bbox', 'segm'])
 optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
@@ -271,6 +268,6 @@ workflow = [('train', 1)]
 opencv_num_threads = 0
 mp_start_method = 'fork'
 auto_scale_lr = dict(enable=True, base_batch_size=16)
-work_dir = './work_dirs/mask_rcnn_r101_caffe_fpn_mstrain-poly_3x_hepg2'
+work_dir = './work_dirs\mask_rcnn_r101_caffe_fpn_mstrain-poly_3x_coco'
 auto_resume = False
 gpu_ids = [0]

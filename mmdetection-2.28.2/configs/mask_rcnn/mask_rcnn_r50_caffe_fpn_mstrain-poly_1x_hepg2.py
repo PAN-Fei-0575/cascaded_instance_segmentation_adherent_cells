@@ -124,8 +124,17 @@ img_norm_cfg = dict(
     mean=[103.53, 116.28, 123.675], std=[1.0, 1.0, 1.0], to_rgb=False)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
-    dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+    dict(
+        type='LoadAnnotations',
+        with_bbox=True,
+        with_mask=True,
+        poly2mask=False),
+    dict(
+        type='Resize',
+        img_scale=[(1333, 640), (1333, 672), (1333, 704), (1333, 736),
+                   (1333, 768), (1333, 800)],
+        multiscale_mode='value',
+        keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
@@ -160,12 +169,21 @@ data = dict(
     workers_per_gpu=2,
     train=dict(
         type='CocoDataset',
-        ann_file=r'data/hepg2/coco_style_rotated/train/annotations.json',
-        img_prefix=r'data/hepg2/coco_style_rotated/train/images',
+        ann_file='data/hepg2/coco_style_rotated/train/annotations.json',
+        img_prefix='data/hepg2/coco_style_rotated/train/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
-            dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+            dict(
+                type='LoadAnnotations',
+                with_bbox=True,
+                with_mask=True,
+                poly2mask=False),
+            dict(
+                type='Resize',
+                img_scale=[(1333, 640), (1333, 672), (1333, 704), (1333, 736),
+                           (1333, 768), (1333, 800)],
+                multiscale_mode='value',
+                keep_ratio=True),
             dict(type='RandomFlip', flip_ratio=0.5),
             dict(
                 type='Normalize',
@@ -181,8 +199,8 @@ data = dict(
         classes=('cell', 'bad_cell')),
     val=dict(
         type='CocoDataset',
-        ann_file=r'data/hepg2/coco_style_rotated/val/annotations.json',
-        img_prefix=r'data/hepg2/coco_style_rotated/val/images',
+        ann_file='data/hepg2/coco_style_rotated/val/annotations.json',
+        img_prefix='data/hepg2/coco_style_rotated/val/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -205,8 +223,8 @@ data = dict(
         classes=('cell', 'bad_cell')),
     test=dict(
         type='CocoDataset',
-        ann_file=r'data/hepg2/coco_style_rotated/test/annotations.json',
-        img_prefix=r'data/hepg2/coco_style_rotated/test/images',
+        ann_file='data/hepg2/coco_style_rotated/test/annotations.json',
+        img_prefix='data/hepg2/coco_style_rotated/test/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -249,6 +267,6 @@ workflow = [('train', 1)]
 opencv_num_threads = 0
 mp_start_method = 'fork'
 auto_scale_lr = dict(enable=True, base_batch_size=16)
-work_dir = './work_dirs/mask_rcnn_r50_caffe_fpn_1x_hepg2'
+work_dir = './work_dirs\mask_rcnn_r50_caffe_fpn_mstrain-poly_1x_coco'
 auto_resume = False
 gpu_ids = [0]

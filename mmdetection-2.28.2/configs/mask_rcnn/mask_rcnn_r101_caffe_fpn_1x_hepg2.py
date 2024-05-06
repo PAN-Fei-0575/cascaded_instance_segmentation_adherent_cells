@@ -1,7 +1,3 @@
-import os
-os.environ["KMP_DUPLICATE_LIB_OK"]  =  "TRUE"
-
-
 model = dict(
     type='MaskRCNN',
     backbone=dict(
@@ -70,14 +66,14 @@ model = dict(
             conv_out_channels=256,
             num_classes=2,
             loss_mask=dict(
-                type='CrossEntropyLoss', use_mask=True, loss_weight=3.0))),
+                type='CrossEntropyLoss', use_mask=True, loss_weight=1.0))),
     train_cfg=dict(
         rpn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
                 pos_iou_thr=0.7,
-                neg_iou_thr=0.2,
-                min_pos_iou=0.2,
+                neg_iou_thr=0.3,
+                min_pos_iou=0.3,
                 match_low_quality=True,
                 ignore_iof_thr=-1),
             sampler=dict(
@@ -92,20 +88,20 @@ model = dict(
         rpn_proposal=dict(
             nms_pre=2000,
             max_per_img=1000,
-            nms=dict(type='nms', iou_threshold=0.6),
+            nms=dict(type='nms', iou_threshold=0.7),
             min_bbox_size=0),
         rcnn=dict(
             assigner=dict(
                 type='MaxIoUAssigner',
-                pos_iou_thr=0.7,
-                neg_iou_thr=0.3,
-                min_pos_iou=0.1,
+                pos_iou_thr=0.5,
+                neg_iou_thr=0.5,
+                min_pos_iou=0.5,
                 match_low_quality=True,
                 ignore_iof_thr=-1),
             sampler=dict(
                 type='RandomSampler',
                 num=512,
-                pos_fraction=0.4,
+                pos_fraction=0.25,
                 neg_pos_ub=-1,
                 add_gt_as_proposals=True),
             mask_size=28,
@@ -116,11 +112,10 @@ model = dict(
             nms_pre=1000,
             max_per_img=1000,
             nms=dict(type='nms', iou_threshold=0.7),
-            min_bbox_size=0,
-            nms_threshold=0.95),
+            min_bbox_size=0),
         rcnn=dict(
-            score_thr=0.2,
-            nms=dict(type='nms', iou_threshold=0.7),
+            score_thr=0.05,
+            nms=dict(type='nms', iou_threshold=0.5),
             max_per_img=100,
             mask_thr_binary=0.5)))
 dataset_type = 'CocoDataset'
@@ -165,8 +160,8 @@ data = dict(
     workers_per_gpu=2,
     train=dict(
         type='CocoDataset',
-        ann_file=r'data/HepG2/coco_style_rotated/train/annotations.json',
-        img_prefix=r'data/HepG2/coco_style_rotated/train/images',
+        ann_file=r'data/hepg2/coco_style_rotated/train/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/train/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
@@ -186,8 +181,8 @@ data = dict(
         classes=('cell', 'bad_cell')),
     val=dict(
         type='CocoDataset',
-        ann_file=r'data/HepG2/coco_style_rotated/val/annotations.json',
-        img_prefix=r'data/HepG2/coco_style_rotated/val/images',
+        ann_file=r'data/hepg2/coco_style_rotated/val/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/val/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(
@@ -210,8 +205,8 @@ data = dict(
         classes=('cell', 'bad_cell')),
     test=dict(
         type='CocoDataset',
-        ann_file=r'data/HepG2/coco_style_rotated/test/annotations.json',
-        img_prefix=r'data/HepG2/coco_style_rotated/test/images',
+        ann_file=r'data/hepg2/coco_style_rotated/test/annotations.json',
+        img_prefix=r'data/hepg2/coco_style_rotated/test/images',
         pipeline=[
             dict(type='LoadImageFromFile'),
             dict(

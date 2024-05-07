@@ -90,7 +90,7 @@ def main():
     reversed_masked_images_dir = os.path.join(mmdet_base_dir, 'work_dirs', args.mmdet_config, 'test',
                                               'reversed_masked_imgs')
     model_config_path = os.path.join(mmcls_base_dir, 'configs', 'resnet', f'{args.mmcls_config}.py')
-    model_checkpoint_path = os.path.join(mmcls_base_dir, 'work_dirs', args.mmcls_config, 'latest.pth')
+    model_checkpoint_path = os.path.join(mmcls_base_dir, 'work_dirs', args.mmcls_config, args.mmdet_config, 'latest.pth')
     model = init_model(model_config_path, model_checkpoint_path, device=args.device)
     vis_folder = os.path.join(mmcls_base_dir, 'work_dirs', args.mmcls_config, args.mmdet_config, 'vis_cls')
     os.makedirs(vis_folder, exist_ok=True)

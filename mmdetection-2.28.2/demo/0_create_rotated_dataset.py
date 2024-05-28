@@ -84,7 +84,7 @@ def process_dataset(src_ann_file, src_img_dir, tar_ann_file, tar_img_dir):
         src_img_path = os.path.join(src_img_dir, src_img_name)
         tar_img_path = os.path.join(tar_img_dir, 'images', src_img_name)
         shutil.copy(src_img_path, tar_img_path)
-        data['images'][item]['file_name'] = src_img_name
+        # data['images'][item]['file_name'] = src_img_name
 
         src_img = load_image(src_img_path)
         rotated_img = rotate_image(src_img, 45)

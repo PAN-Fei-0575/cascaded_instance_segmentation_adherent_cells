@@ -446,13 +446,25 @@ def main():
 
         generate_txt(mmcls_dataset_path)
 
-        # Inserting the function parameter into the content
-        args.config_dir = 'mask_rcnn_r50_caffe_fpn_1x_hepg2'  # Change this to 'faster_rcnn' or any other function name
         modified_template = generate_classification_dataset(template, args.config_dir)
 
-        # Writing content to a file
-        with open(os.path.join(mmcls_root, r"configs\_base_\datasets\hepg2.py"), "w") as f:
-            f.write(modified_template)
+        # Define the grandchild directory path
+        grandchild_directory = os.path.join(mmcls_root, 'configs', '_base_', 'datasets')
+
+        # Ensure the directory exists
+        os.makedirs(grandchild_directory, exist_ok=True)
+
+        # Define the file path
+        file_path = os.path.join(grandchild_directory, 'hepg2.py')
+
+        # Write content to the file
+        with open(file_path, 'w') as file:
+            file.write(modified_template)
+
+        print(f"File hepg2.py has been created at {file_path}")
+        
+        # with open(os.path.join(mmcls_root, r"configs/_base_/datasets/hepg2.py"), "w") as f:
+            # f.write(modified_template)
 
     elif args.set == 'test':
         reversed_mask_preds_dir = os.path.join(mmdet_root_dir, 'work_dirs', args.config_dir, args.set,

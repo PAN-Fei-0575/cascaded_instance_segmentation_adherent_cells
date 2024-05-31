@@ -141,36 +141,37 @@ def main():
                     class_names.append('cell')
                 elif ann['category_id'] == 2:
                     class_names.append('bad_cell')
+            
+            if anns:
+                conf_score = np.array(conf_score)
+                conf_score = conf_score[:, np.newaxis]
+                bboxes = np.array(bboxes)
+                labels = np.array(labels)
+                segms = np.array(segms)
 
-            conf_score = np.array(conf_score)
-            conf_score = conf_score[:, np.newaxis]
-            bboxes = np.array(bboxes)
-            labels = np.array(labels)
-            segms = np.array(segms)
+                # Calculate x2 and y2
+                x2 = bboxes[:, 0] + bboxes[:, 2]
+                y2 = bboxes[:, 1] + bboxes[:, 3]
 
-            # Calculate x2 and y2
-            x2 = bboxes[:, 0] + bboxes[:, 2]
-            y2 = bboxes[:, 1] + bboxes[:, 3]
+                # Stack x1, y1, x2, y2 horizontally
+                bboxes = np.hstack((bboxes[:, :2], x2[:, np.newaxis], y2[:, np.newaxis]))
+                bboxes = np.concatenate((bboxes, conf_score), axis=1)
 
-            # Stack x1, y1, x2, y2 horizontally
-            bboxes = np.hstack((bboxes[:, :2], x2[:, np.newaxis], y2[:, np.newaxis]))
-            bboxes = np.concatenate((bboxes, conf_score), axis=1)
-
-            imshow_det_bboxes(img,
-                              bboxes=bboxes,
-                              labels=labels,
-                              segms=segms,
-                              class_names=class_names,
-                              score_thr=0,
-                              bbox_color='green',
-                              text_color='green',
-                              mask_color=None,
-                              thickness=2,
-                              font_size=8,
-                              win_name='',
-                              show=False,
-                              wait_time=0,
-                              out_file=out_file)
+                imshow_det_bboxes(img,
+                                  bboxes=bboxes,
+                                  labels=labels,
+                                  segms=segms,
+                                  class_names=class_names,
+                                  score_thr=0,
+                                  bbox_color='green',
+                                  text_color='green',
+                                  mask_color=None,
+                                  thickness=2,
+                                  font_size=8,
+                                  win_name='',
+                                  show=False,
+                                  wait_time=0,
+                                  out_file=out_file)
 
     # Bbox evaluation
     annType = 'bbox'

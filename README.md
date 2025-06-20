@@ -1,6 +1,6 @@
 # Accurate Detection and Instance Segmentation of Unstained Living Adherent Cells in Differential Interference Contrast Images
 
-Brief description or abstract of your research project.
+**I apologize that these codes may not be the most up-to-date versions, as I have been quite busy since beginning my independent research at my current university. If you encounter any issues, please feel free to email me. Thank you.**
 
 ## Table of Contents
 
